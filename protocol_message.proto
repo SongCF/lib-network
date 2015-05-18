@@ -1,0 +1,79 @@
+package PetOnline;
+option optimize_for = LITE_RUNTIME;
+
+
+
+//***********        基本信息        ***********//
+//坐标信息
+message CoordinateInfo {
+    required float latitude         = 1;    //维度: >0 北纬 <0 南纬
+    required float longitude        = 2;    //经度: >0 东经 <0 西经
+}
+
+//用户信息
+message UserInfo {
+    required string nickname           = 1;    //用户昵称
+    optional CoordinateInfo coordinate  = 2;    //坐标信息
+}
+
+
+//道具
+message ItemInfo {
+    required int32 item_id          = 1;    //道具id
+    optional int32 item_count       = 2;    //道具数量
+}
+
+
+//交换信息
+message ExchangeInfo {
+    required bool is_exchanged          = 1;    //互换状态 true:已交换, false:下架
+    optional ItemInfo onhand_item       = 2;    //库存的道具
+    optional ItemInfo need_item         = 3;    //需要的道具
+    optional uint32 ex_time             = 4;    //交换或者下架时间戳
+    optional UserInfo exchanged_user    = 5;    //互换道具的用户昵称
+}
+
+
+
+//***********        登陆        ***********//
+//注册请求包
+message RegistReq { 
+    required string account         = 1;    //账户名
+    optional string passwd          = 2;    //密码
+    optional string nickname        = 3;    //昵称
+}
+
+//注册回应包
+message RegistRsp { 
+    required int32 rsp_code         = 1;    
+    optional int32 user_id          = 2;    //系统分配的唯一ID
+}
+
+
+//登陆请求包          
+message LoginReq { 
+    required int32 user_id              = 1;
+    optional CoordinateInfo coordinate  = 2;    //坐标信息
+}
+
+//登陆回应包
+message LoginRsp { 
+    required int32 rsp_code         = 1; 
+    
+    repeated ExchangeInfo exchanged = 2;    //已经交换的记录信息
+    repeated ExchangeInfo unshelve  = 3;    //已经下架的记录信息
+}
+
+
+//互换请求包
+message ExchangeReq { 
+    required int32 user_id          = 1;
+    optional ItemInfo onhand_item   = 2;    //库存的道具
+    optional ItemInfo need_item     = 3;    //需要的道具
+}
+
+//互换回应包
+message ExchangeRsp { 
+    required int32 rsp_code         = 1;
+    optional ExchangeInfo ex_info   = 2;    //是否交换 没有此字段则被挂起
+}
